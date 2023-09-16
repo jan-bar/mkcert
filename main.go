@@ -48,6 +48,9 @@ const shortUsage = `Usage of mkcert:
 
 const advancedUsage = `Advanced options:
 
+	-days
+	    Set the number of days for certificate expiration.
+
 	-cert-file FILE, -key-file FILE, -p12-file FILE
 	    Customize the output paths.
 
@@ -89,9 +92,10 @@ func main() {
 		fmt.Print(shortUsage)
 		return
 	}
-	log.SetFlags(0)
+	log.SetFlags(log.Lshortfile)
 	var (
 		installFlag   = flag.Bool("install", false, "")
+		daysFlag      = flag.Int("days", 365*2, "")
 		uninstallFlag = flag.Bool("uninstall", false, "")
 		pkcs12Flag    = flag.Bool("pkcs12", false, "")
 		ecdsaFlag     = flag.Bool("ecdsa", false, "")
@@ -142,7 +146,7 @@ func main() {
 	if *csrFlag != "" && flag.NArg() != 0 {
 		log.Fatalln("ERROR: can't specify extra arguments when using -csr")
 	}
-	(&mkcert{
+	(&mkcert{days: *daysFlag,
 		installMode: *installFlag, uninstallMode: *uninstallFlag, csrPath: *csrFlag,
 		pkcs12: *pkcs12Flag, ecdsa: *ecdsaFlag, client: *clientFlag,
 		certFile: *certFileFlag, keyFile: *keyFileFlag, p12File: *p12FileFlag,
@@ -153,6 +157,8 @@ const rootName = "rootCA.pem"
 const rootKeyName = "rootCA-key.pem"
 
 type mkcert struct {
+	days int
+
 	installMode, uninstallMode bool
 	pkcs12, ecdsa, client      bool
 	keyFile, certFile, p12File string

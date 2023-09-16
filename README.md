@@ -1,5 +1,7 @@
 # mkcert
 
+install: `go install github.com/jan-bar/mkcert@latest`
+
 mkcert is a simple tool for making locally-trusted development certificates. It requires no configuration.
 
 ```
